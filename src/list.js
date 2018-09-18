@@ -24,7 +24,7 @@ class List extends Component {
                 <ul id="productList" className="ist-group list-group-flush">
                     {currentItems.map(item => (
                         <li className="list-group-item" key={item.id}>
-                            {item.product_name}
+                            {item.id} - {item.product_name}
                         </li>
                     ))}
                 </ul>

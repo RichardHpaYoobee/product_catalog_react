@@ -5,8 +5,6 @@ import Pagenation from './pagenation';
 import List from './list';
 import './App.css'
 
-const recPerPage = 100;
-
 class App extends Component {
 
     constructor(props){
@@ -14,14 +12,15 @@ class App extends Component {
         this.state = {
             error: null,
             isLoaded: false,
+            recPerPage: 100,
             totalRecords: 0,
             allItems: [],
             currentItems: [],
             page: 1,
-            recPerPage: 0,
             currentPage: 1,
             totalPages: 1
         }
+        this.handleChangePage = this.handleChangePage.bind(this);
     }
 
     componentDidMount() {
@@ -30,7 +29,7 @@ class App extends Component {
         .then(
           (result) => {
               var currentRecords = [];
-              for (var i = 0; i < recPerPage; i++) {
+              for (var i = 0; i < this.state.recPerPage; i++) {
                   currentRecords.push(result[i]);
               }
 
@@ -39,8 +38,7 @@ class App extends Component {
               allItems: result,
               totalRecords: result.length,
               currentItems: currentRecords,
-              recPerPage: 10,
-              totalPages: Math.ceil(result.length/recPerPage)
+              totalPages: Math.ceil(result.length/this.state.recPerPage)
             });
 
           },
@@ -58,7 +56,7 @@ class App extends Component {
             <div>
             <nav className="navbar navbar-dark bg-dark fixed-top">
                 <div className="container text-center">
-                    <h1 className="title">Online Shopping Catalog - {process.env.REACT_APP_APPURL}</h1>
+                    <h1 className="title">Online Shopping Catalog</h1>
                 </div>
             </nav>
                 <nav className="navbar navbar-light bg-light fixed-top fixed-top-2">
@@ -69,6 +67,7 @@ class App extends Component {
                                 <nav aria-label="Page navigation example">
                                   <Pagenation
                                     {...this.state}
+                                    changePage={this.handleChangePage}
                                   />
                                 </nav>
                             </div>
@@ -92,6 +91,23 @@ class App extends Component {
 
             </div>
         );
+    }
+
+    handleChangePage(page){
+        this.setState({
+          currentPage: page['pageNumber']
+        });
+        var startingID = page['startRecord'];
+        var currentProducts = [];
+        for (var i = 0; i < this.state.recPerPage; i++) {
+            if(this.state.allItems[startingID]){
+                currentProducts.push(this.state.allItems[startingID]);
+                startingID++;
+            }
+        }
+        this.setState({
+            currentItems: currentProducts
+        })
     }
 }
 
